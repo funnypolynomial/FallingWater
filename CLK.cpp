@@ -142,7 +142,7 @@ const word PROGMEM SegmentsBelow[] =
 
 // Simplify choosing the segments in a row (like E,K,L,M,C) in random order.
 // Pick a word at random, each octal digit is a column
-const word segmentColumPermutations[] =
+const word segmentColumnPermutations[] =
 {
   014230,
   043102,
@@ -294,10 +294,10 @@ void ConvertToDrips(word segments, byte idx)
   for (int r = 4; r >= 0; r--)
   {
     // pick a random permutation of the columns
-    word colPermutations = segmentColumPermutations[random(sizeof(segmentColumPermutations)/sizeof(segmentColumPermutations[0]))];
+    word colPermutations = segmentColumnPermutations[random(sizeof(segmentColumnPermutations)/sizeof(segmentColumnPermutations[0]))];
     for (int c = 0; c < 5; c++)
     {
-      int col = colPermutations & 07;
+      int col = (colPermutations & 7) % 5;
       colPermutations >>= 3;
       if (segments & LCD_SEG_BIT(Segments::Layout[r][col]))
         if (numDrips < NUM_DRIPS)
@@ -309,7 +309,8 @@ void ConvertToDrips(word segments, byte idx)
 void DrawDrips(byte maxIdx)
 {
   // Redraw characters from drips
-  for (int i = 0; i <= 6 + maxIdx; i++)
+  // Character positions 0 (bottom)..maxIdx are cleared because they will be filled from drips[]
+  for (int i = 0; i <= maxIdx; i++)
       chars[i] = 0;
   for (int i = 0; i < numDrips; i++)
     if (drips[i] != 0xFF)
@@ -446,7 +447,7 @@ void UpdateTime(byte hour, bool PM, bool force = false)
       int Step = 0;
       do
       {
-        DrawDrips(top);
+        DrawDrips(LCD_NUM_CHARS - (4 - top));
         // let a btn interrupt animation
         if (!force)
         {
@@ -496,6 +497,8 @@ void UpdateTime(byte hour, bool PM, bool force = false)
 #if defined(CFG_DISPLAY_12_HOUR) && defined(CFG_DISPLAY_AM_PM)
     chars[4] = LCD::GetFontSegments(PM?'P':'A');
     chars[3] = LCD::GetFontSegments('M');
+#else
+    (void)PM;    
 #endif    
     UpdateChars();
   }
@@ -602,7 +605,7 @@ void Splash()
       int Step = 0;
       do
       {
-        DrawDrips(9);    
+        DrawDrips(LCD_NUM_CHARS - 1);
         delay(CFG_FRAME_DELAY_MS);
       } while (AdvanceDrips(Step++, true, 9, 2));    
     }

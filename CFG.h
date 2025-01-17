@@ -23,7 +23,7 @@
 // If defined, time is displayed in 12-hour mode, otherwise 24-hour
 #define CFG_DISPLAY_12_HOUR
 
-// If defined, and CFG_DISPLAY_12_HOUR, A or P is added to the time display (except in Falling mode)
+// If defined, and CFG_DISPLAY_12_HOUR, A or P is added to the time display (except in Fall & Word modes)
 #define CFG_DISPLAY_AM_PM
 
 // These three LDR/PWM's are just DEFAULTS
