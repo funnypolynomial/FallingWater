@@ -676,8 +676,10 @@ tButton Loop()
         thisHour -= 12;
         PM = true;
       }
+      else if (thisHour == 12)
+        PM = true;
       if (thisHour == 0)
-        thisHour = 1;
+        thisHour = 12;
       nextDigits[3] = thisHour / 10;
       if (nextDigits[3] == 0)
         nextDigits[3] = BLANK_DIGIT;
